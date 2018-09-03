@@ -8,14 +8,13 @@ use EssentialsPE\BaseFiles\BaseEventHandler;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\entity\EntityExplodeEvent;
 use pocketmine\event\player\PlayerInteractEvent;
-use pocketmine\event\server\ServerCommandEvent;
-
+use pocketmine\event\server\CommandEvent;
 
 class OtherEvents extends BaseEventHandler{
     /**
-     * @param ServerCommandEvent $event
+     * @param CommandEvent $event
      */
-    public function onServerCommand(ServerCommandEvent $event): void{
+    public function onServerCommand(CommandEvent $event): void{
         $command = $this->getAPI()->colorMessage($event->getCommand());
         if($command === false){
             $event->setCancelled(true);
