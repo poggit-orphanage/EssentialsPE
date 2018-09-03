@@ -47,6 +47,7 @@ use pocketmine\network\mcpe\protocol\MobEffectPacket;
 use pocketmine\network\mcpe\protocol\SetTimePacket;
 use pocketmine\OfflinePlayer;
 use pocketmine\permission\Permission;
+use pocketmine\permission\PermissionManager;
 use pocketmine\Player;
 use pocketmine\Server;
 use pocketmine\utils\Config;
@@ -130,7 +131,8 @@ class BaseAPI{
 
     private final function loadWarps(): void{
         $parent = new Permission("essentials.warps", null, null);
-        $this->getServer()->getPluginManager()->addPermission($parent);
+        PermissionManager::getInstance()->addPermission($parent);
+        PermissionManager::getInstance()->addPermission($parent);
 
         $cfg = new Config($this->getEssentialsPEPlugin()->getDataFolder() . "Warps.yml", Config::YAML);
         foreach($cfg->getAll() as $n => $v){
@@ -141,7 +143,7 @@ class BaseAPI{
                 $this->warps[$n] = new BaseLocation($n, (int) $v[0], (int) $v[1], (int) $v[2], $this->getServer()->getLevelByName($v[3]), $v[4] ?? 0.0, $v[5] ?? 0.0);
                 $child = new Permission("essentials.warps." . $n, null, null);
                 $child->addParent($parent, false);
-                $this->getServer()->getPluginManager()->addPermission($child);
+                PermissionManager::getInstance()->addPermission($child);
             }
         }
     }
@@ -1864,7 +1866,7 @@ class BaseAPI{
      *      \/ \__,_|_| |_|_|___|_| |_|
      */
 
-    /** @var Effect|null */
+    /** @var EffectInstance|null */
     private $invisibilityEffect = null;
 
     /**
