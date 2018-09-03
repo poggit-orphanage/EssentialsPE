@@ -1,7 +1,7 @@
 name: EssentialsPE
 main: EssentialsPE\Loader
-version: 2.1.0
-api: [3.0.0]
+version: 2.1.1
+api: [4.0.0]
 author: LegendsOfMCPE Team
 website: https://github.com/LegendOfMCPE/EssentialsPE
 
