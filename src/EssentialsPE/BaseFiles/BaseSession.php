@@ -90,7 +90,7 @@ class BaseSession{
             $values[$k] = $v;
         }
         $this->config->setAll($values);
-        $this->config->save(true);
+        $this->config->save();
     }
 
     public function onClose(): void{
