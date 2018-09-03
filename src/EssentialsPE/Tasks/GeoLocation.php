@@ -8,7 +8,7 @@ use EssentialsPE\Loader;
 use pocketmine\Player;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
-use pocketmine\utils\Utils;
+use pocketmine\utils\Internet;
 
 class GeoLocation extends AsyncTask{
     /** @var Player[]|null */
@@ -34,12 +34,12 @@ class GeoLocation extends AsyncTask{
 
     public function onRun(): void{
         if($this->player === null){
-            $data = Utils::getURL("http://ip-api.com/json/");
+            $data = Internet::getURL("http://ip-api.com/json/");
             $this->setResult(json_decode($data, true)["country"] ?? "Unknown");
         }else{
             $list = [];
             foreach($this->ip as $spl => $ip){
-                $data = Utils::getURL("http://ip-api.com/json/" . $ip);
+                $data = Internet::getURL("http://ip-api.com/json/" . $ip);
                 $data = json_decode($data, true);
                 if(isset($data["message"]) && $data["message"] === "private range"){
                     $data["country"] = "server";
