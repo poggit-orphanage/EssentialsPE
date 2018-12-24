@@ -218,7 +218,13 @@ class BaseAPI{
      * @return bool
      */
     public function setAFKMode(Player $player, bool $state, bool $broadcast = true): bool{
-        PermissionManager::getInstance()->callEvent($ev = new PlayerAFKModeChangeEvent($this, $player, $state, $broadcast));
+        $ev = new PlayerAFKModeChangeEvent($this, $player, $state, $broadcast);
+	    try{
+		    $ev->call();
+	    }
+	    catch(\ReflectionException $exception){
+		    $this->getEssentialsPEPlugin()->getLogger()->logException($exception);
+	    }
         if($ev->isCancelled()){
             return false;
         }
@@ -503,7 +509,13 @@ class BaseAPI{
      * @return bool
      */
     public function setFlying(Player $player, bool $mode): bool{
-        PermissionManager::getInstance()->callEvent($ev = new PlayerFlyModeChangeEvent($this, $player, $mode));
+        $ev = new PlayerFlyModeChangeEvent($this, $player, $mode);
+	    try{
+		    $ev->call();
+	    }
+	    catch(\ReflectionException $exception){
+		    $this->getEssentialsPEPlugin()->getLogger()->logException($exception);
+	    }
         if($ev->isCancelled()){
             return false;
         }
@@ -595,7 +607,13 @@ class BaseAPI{
      * @return bool
      */
     public function setGodMode(Player $player, bool $state): bool{
-        PermissionManager::getInstance()->callEvent($ev = new PlayerGodModeChangeEvent($this, $player, $state));
+        $ev = new PlayerGodModeChangeEvent($this, $player, $state);
+	    try{
+		    $ev->call();
+	    }
+	    catch(\ReflectionException $exception){
+		    $this->getEssentialsPEPlugin()->getLogger()->logException($exception);
+	    }
         if($ev->isCancelled()){
             return false;
         }
@@ -720,7 +738,7 @@ class BaseAPI{
 
         return $item;
     }
-	
+
 	/**
 	 * Returns a name of an item using the class constants of the Item class.
 	 * This name is not equal to the getName() function from Item classes.
@@ -744,7 +762,7 @@ class BaseAPI{
 		}
 		return implode(" ", $finalItemName);
 	}
-	
+
 	/**
 	 * Converts the readable item name (made using function above) to an Item object.
 	 *
@@ -1052,7 +1070,13 @@ class BaseAPI{
      */
     public function setMute(Player $player, bool $state, \DateTime $expires = null, bool $notify = true): bool{
         if($this->isMuted($player) !== $state){
-            PermissionManager::getInstance()->callEvent($ev = new PlayerMuteEvent($this, $player, $state, $expires));
+            $ev = new PlayerMuteEvent($this, $player, $state, $expires);
+	        try{
+		        $ev->call();
+	        }
+	        catch(\ReflectionException $exception){
+		        $this->getEssentialsPEPlugin()->getLogger()->logException($exception);
+	        }
             if($ev->isCancelled()){
                 return false;
             }
@@ -1110,7 +1134,13 @@ class BaseAPI{
         if(strtolower($nick) === strtolower($player->getName()) || $nick === "off" || trim($nick) === "" || $nick === null){
             return $this->removeNick($player);
         }
-        PermissionManager::getInstance()->callEvent($ev = new PlayerNickChangeEvent($this, $player, $this->colorMessage($nick)));
+        $ev = new PlayerNickChangeEvent($this, $player, $this->colorMessage($nick));
+	    try{
+		    $ev->call();
+	    }
+	    catch(\ReflectionException $exception){
+		    $this->getEssentialsPEPlugin()->getLogger()->logException($exception);
+	    }
         if($ev->isCancelled()){
             return false;
         }
@@ -1126,8 +1156,14 @@ class BaseAPI{
      * @return bool
      */
     public function removeNick(Player $player): bool{
-        PermissionManager::getInstance()->callEvent($event = new PlayerNickChangeEvent($this, $player, $player->getName()));
-        if($event->isCancelled()){
+        $ev = new PlayerNickChangeEvent($this, $player, $player->getName());
+	    try{
+		    $ev->call();
+	    }
+	    catch(\ReflectionException $exception){
+		    $this->getEssentialsPEPlugin()->getLogger()->logException($exception);
+	    }
+        if($ev->isCancelled()){
             return false;
         }
         $this->getSession($player)->setNick(null);
@@ -1436,7 +1472,13 @@ class BaseAPI{
      * @return bool
      */
     public function setPvP(Player $player, bool $state): bool{
-        PermissionManager::getInstance()->callEvent($ev = new PlayerPvPModeChangeEvent($this, $player, $state));
+        $ev = new PlayerPvPModeChangeEvent($this, $player, $state);
+	    try{
+		    $ev->call();
+	    }
+	    catch(\ReflectionException $exception){
+		    $this->getEssentialsPEPlugin()->getLogger()->logException($exception);
+	    }
         if($ev->isCancelled()){
             return false;
         }
@@ -1497,7 +1539,13 @@ class BaseAPI{
                     $values[$k] = $v;
                 }
                 $this->getEssentialsPEPlugin()->getLogger()->debug("Creating virtual session...");
-                PermissionManager::getInstance()->callEvent($ev = new SessionCreateEvent($this, $p, $values));
+                $ev = new SessionCreateEvent($this, $p, $values);
+	            try{
+		            $ev->call();
+	            }
+	            catch(\ReflectionException $exception){
+		            $this->getEssentialsPEPlugin()->getLogger()->logException($exception);
+	            }
                 $this->getEssentialsPEPlugin()->getLogger()->debug("Setting up new values...");
                 $values = $ev->getValues();
                 $m = BaseSession::$defaults["isMuted"];
@@ -1508,8 +1556,14 @@ class BaseAPI{
                     }
                     $m = $values["isMuted"];
                     if(is_int($t = $values["mutedUntil"])){
-                        $date = new \DateTime();
-                        $mU = date_timestamp_set($date, $values["mutedUntil"]);
+                    	$date = null;
+	                    try{
+		                    $date = new \DateTime();
+	                    }
+	                    catch(\Exception $e){
+	                    	$this->getEssentialsPEPlugin()->getLogger()->logException($e);
+	                    }
+	                    $mU = date_timestamp_set($date, $values["mutedUntil"]);
                     }else{
                         $mU = $values["mutedUntil"];
                     }
@@ -1613,7 +1667,7 @@ class BaseAPI{
         }
         return true;
     }
-	
+
 	/**
 	 * Return an array with the following values:
 	 * 0 => Timestamp integer
@@ -1840,7 +1894,13 @@ class BaseAPI{
      * @return bool
      */
     public function setUnlimited(Player $player, bool $mode): bool{
-        PermissionManager::getInstance()->callEvent($ev = new PlayerUnlimitedModeChangeEvent($this, $player, $mode));
+        $ev = new PlayerUnlimitedModeChangeEvent($this, $player, $mode);
+	    try{
+		    $ev->call();
+	    }
+	    catch(\ReflectionException $exception){
+		    $this->getEssentialsPEPlugin()->getLogger()->logException($exception);
+	    }
         if($ev->isCancelled()){
             return false;
         }
@@ -1865,7 +1925,7 @@ class BaseAPI{
      *      \/ \__,_|_| |_|_|___|_| |_|
      */
 
-    /** @var Effect|null */
+    /** @var Effect|EffectInstance|null */
     private $invisibilityEffect = null;
 
     /**
@@ -1904,7 +1964,13 @@ class BaseAPI{
             $effect = new EffectInstance(Effect::getEffect(Effect::INVISIBILITY), INT32_MAX, 0, false);
             $this->invisibilityEffect = $effect;
         }
-        PermissionManager::getInstance()->callEvent($ev = new PlayerVanishEvent($this, $player, $state, $noPacket));
+        $ev = new PlayerVanishEvent($this, $player, $state, $noPacket);
+	    try{
+		    $ev->call();
+	    }
+	    catch(\ReflectionException $exception){
+		    $this->getEssentialsPEPlugin()->getLogger()->logException($exception);
+	    }
         if($ev->isCancelled()){
             return false;
         }
