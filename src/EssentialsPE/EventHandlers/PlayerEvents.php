@@ -90,9 +90,10 @@ class PlayerEvents extends BaseEventHandler{
         }
     }
 
-    /**
-     * @param PlayerChatEvent $event
-     */
+	/**
+	 * @param PlayerChatEvent $event
+	 * @throws \Exception
+	 */
     public function onPlayerChat(PlayerChatEvent $event): void{
         if($this->getAPI()->isMuted($event->getPlayer())){
             if($event->getPlayer()->hasPermission("essentials.mute.exempt")){
